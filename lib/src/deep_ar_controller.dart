@@ -9,6 +9,8 @@ import 'package:flutter/services.dart';
 import 'utils.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 
+import 'package:bitmap/bitmap.dart';
+
 /// Controls all interaction with DeepAR Sdk.
 class DeepArController {
   late final DeepArPlatformHandler _deepArPlatformHandler;
@@ -270,6 +272,32 @@ class DeepArController {
     } else {
       debugPrint("Invalid datatype passed in newParameter");
       throw ("Invalid field newParameter. Please refer docs to pass correct value.");
+    }
+  }
+
+
+    ///Change a parameter texture
+  Future<void> changeParameterTexture({
+    required String gameObject,
+    required String component,
+    required String parameter,
+    required Bitmap newParameter,
+  }) async {
+
+    try{
+      Map<String, dynamic> arguments = {};
+      arguments['gameObject'] = gameObject;
+      arguments['component'] = component;
+      arguments['parameter'] = parameter;
+      arguments['newParameter'] = parameter;
+    
+      await platformRun(
+          androidFunction: () =>
+              _deepArPlatformHandler.changeParameterTexture(arguments),
+          iOSFunction: () => _deepArPlatformHandler.changeParameterTextureIos(
+              _textureId!, arguments));
+    } catch(e) {
+      debugPrint("changeParameterTexture error: " +e.toString());      
     }
   }
 

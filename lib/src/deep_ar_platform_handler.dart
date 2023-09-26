@@ -332,4 +332,12 @@ class DeepArPlatformHandler {
   Future<void> changeParameterIos(int view, Map<String, dynamic> arguments) {
     return _avCameraChannel(view).invokeMethod("changeParameter", arguments);
   }
+
+  Future<void> changeParameterTexture(Map<String, dynamic> arguments) {
+    return _channel.invokeMethod("changeParameterTexture", arguments);
+  }
+
+  Future<void> changeParameterTextureIos(int view, Map<String, dynamic> arguments) {
+    return _avCameraChannel(view).invokeMethod("changeParameterTexture", arguments);
+  }
 }
