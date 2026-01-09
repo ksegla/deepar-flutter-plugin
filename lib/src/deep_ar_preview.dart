@@ -14,14 +14,14 @@ class DeepArPreview extends StatefulWidget {
 }
 
 class _DeepArPreviewState extends State<DeepArPreview> {
+  
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: AspectRatio(
-          aspectRatio: (1 / widget.deepArController.aspectRatio),
-          child: Platform.isAndroid ? _androidView() : _iOSView()),
+    return SizedBox.expand(
+      child: Platform.isAndroid ? _androidView() : _iOSView(),
     );
   }
+
 
   Widget _iOSView() {
     return widget.deepArController.buildPreview(oniOSViewCreated: () {
@@ -35,6 +35,6 @@ class _DeepArPreviewState extends State<DeepArPreview> {
         .addPostFrameCallback((timeStamp) => widget.onViewCreated?.call());
     return widget.deepArController.isInitialized
         ? widget.deepArController.buildPreview()
-        : const SizedBox.shrink();
+        : const SizedBox.expand();
   }
 }
