@@ -275,13 +275,12 @@ class DeepArController {
     }
   }
 
-
-    ///Change a parameter texture
+  ///Change a parameter texture
   Future<void> changeParameterTexture({
     required String gameObject,
     required String component,
     required String parameter,
-    required Bitmap newParameter,
+    required String newValue,
   }) async {
 
     try{
@@ -289,7 +288,33 @@ class DeepArController {
       arguments['gameObject'] = gameObject;
       arguments['component'] = component;
       arguments['parameter'] = parameter;
-      arguments['newParameter'] = parameter;
+      arguments['newValue'] = newValue;
+
+      await platformRun(
+          androidFunction: () =>
+              _deepArPlatformHandler.changeParameterTexture(arguments),
+          iOSFunction: () => _deepArPlatformHandler.changeParameterTextureIos(
+              _textureId!, arguments));
+    } catch(e) {
+      debugPrint("changeParameterTexture error: " +e.toString());
+    }
+  }
+
+/*
+    ///Change a parameter texture
+  Future<void> changeParameterTexture({
+    required String gameObject,
+    required String component,
+    required String parameter,
+    required String newParameter,
+  }) async {
+
+    try{
+      Map<String, dynamic> arguments = {};
+      arguments['gameObject'] = gameObject;
+      arguments['component'] = component;
+      arguments['parameter'] = parameter;
+      arguments['newParameter'] = newParameter;
     
       await platformRun(
           androidFunction: () =>
@@ -300,7 +325,7 @@ class DeepArController {
       debugPrint("changeParameterTexture error: " +e.toString());      
     }
   }
-
+*/
   ///Flips Camera and return the current direction
   Future<CameraDirection> flipCamera() async {
     final result = await platformRun(

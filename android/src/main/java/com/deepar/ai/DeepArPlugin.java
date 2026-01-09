@@ -3,6 +3,9 @@ package com.deepar.ai;
 import androidx.annotation.NonNull;
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.SurfaceTexture;
 import android.media.Image;
 import android.media.MediaScannerConnection;
@@ -10,6 +13,7 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Surface;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Date;
@@ -299,11 +303,74 @@ public class DeepArPlugin implements FlutterPlugin, AREventListener, ActivityAwa
                     }
                 }
                 break;
+
+            case "changeParameterTexture":
+                gameObject = ((String) arguments.get("gameObject"));
+                component = ((String) arguments.get("component"));
+                parameter = ((String) arguments.get("parameter"));
+
+
+                try {
+                    String image = ((String) arguments.get("newValue"));
+                    byte[] decodedString = stringToBytes(image);
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    deepAR.changeParameterTexture(gameObject, component, parameter, bitmap);
+                    result.success("changeParameterTexture called successfully");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    result.error("111", "changeParameterTexture failed", e.getMessage());
+                }
+
+/*
+                //if (image instanceof Bitmap) {
+                    try {
+                        //InputStream inputStream = _getAssetFileInputStream((String) newParameter);
+                        //Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                        //byte[] decodedString = image.getBytes();//("utf-8") ; //(Charsets.UTF_8);
+                        //ByteArrayInputStream inputStream = new ByteArrayInputStream(((String) image).getBytes());
+                        //Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                        Bitmap bitmap1 = textAsBitmap(image, 50, Color.parseColor("blue"));
+                        // = (Bitmap) newParameter;
+                        deepAR.changeParameterTexture(gameObject, component, parameter, bitmap1);
+                        //inputStream.close();
+                        result.success("changeParameter called successfully");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        result.error("111", "changeParameter failed", e.getMessage());
+                    }
+
+ */
+                //}
+                break;
         }
 
 
     }
 
+    public byte[] stringToBytes(String s) {
+        String[] bits = s.split(",");
+        byte[] res = new byte[bits.length];
+        for (int i=0; i<bits.length; i++){
+            byte b = (byte) Integer.parseInt(bits[i]);
+            res[i] = b;
+        }
+        return res;
+    }
+
+    public Bitmap textAsBitmap(String text, float textSize, int textColor) {
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setTextSize(textSize);
+        paint.setColor(textColor);
+        //paint.setAntiAlias(true);
+        paint.setTextAlign(Paint.Align.LEFT);
+        float baseline = -paint.ascent(); // ascent() is negative
+        int width = (int) (paint.measureText(text) + 0.5f); // round
+        int height = (int) (baseline + paint.descent() + 0.5f);
+        Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(image);
+        canvas.drawText(text, 0, baseline, paint);
+        return image;
+    }
     private String getResetPath(){
         return null;
     }
